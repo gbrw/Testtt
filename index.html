@@ -47,34 +47,135 @@
             <p>رمز الغرفة: <span id="waiting-room-code"></span></p>
         </div>
     </div>
+<!-- جولة "ماذا تعرف؟" -->
+<div id="knowledge-round" class="round-section">
+    <h2>جولة: ماذا تعرف؟</h2>
+    <div class="question-container">
+        <h3 id="knowledge-question"></h3>
+        <div class="answer-section">
+            <input type="text" id="knowledge-answer" placeholder="اكتب إجابتك هنا">
+            <div class="buttons-container">
+                <button id="submit-knowledge" class="btn primary">إرسال</button>
+                <button id="pass-knowledge" class="btn secondary">تمرير</button>
+            </div>
+        </div>
+        <p>المحاولات المتبقية: <span id="attempts-left">3</span></p>
+    </div>
+</div>
 
+<!-- جولة "المزاد" -->
+<div id="auction-round" class="round-section hidden">
+    <h2>جولة: المزاد</h2>
+    <div class="question-container">
+        <h3 id="auction-question"></h3>
+        <div class="bidding-section">
+            <p>المزايدة الحالية: <span id="current-bid">1</span></p>
+            <div class="buttons-container">
+                <button id="decrease-bid" class="btn secondary">-</button>
+                <button id="increase-bid" class="btn secondary">+</button>
+                <button id="submit-bid" class="btn primary">تأكيد</button>
+                <button id="pass-bid" class="btn danger">تمرير</button>
+            </div>
+        </div>
+        <div id="auction-answer-section" class="hidden">
+            <p>عليك تقديم <span id="required-answers">3</span> إجابات:</p>
+            <div id="auction-answers-container"></div>
+            <button id="submit-answers" class="btn primary">إرسال الإجابات</button>
+        </div>
+    </div>
+</div>
+
+<!-- جولة "الجرس" -->
+<div id="bell-round" class="round-section hidden">
+    <h2>جولة: الجرس</h2>
+    <div class="question-container">
+        <h3 id="bell-question"></h3>
+        <button id="bell-button" class="bell-button">
+            <img src="images/bell.svg" alt="جرس">
+        </button>
+        <div id="bell-answer-section" class="answer-section hidden">
+            <input type="text" id="bell-answer" placeholder="اكتب إجابتك هنا">
+            <button id="submit-bell-answer" class="btn primary">إرسال</button>
+        </div>
+    </div>
+</div>
+
+<!-- جولة "مسيرة لاعب" -->
+<div id="career-round" class="round-section hidden">
+    <h2>جولة: مسيرة لاعب</h2>
+    <div class="question-container">
+        <h3 id="career-question"></h3>
+        <div class="answer-section">
+            <input type="text" id="career-answer" placeholder="اكتب اسم اللاعب هنا">
+            <button id="submit-career" class="btn primary">إرسال</button>
+        </div>
+    </div>
+</div>
+
+<!-- شاشة النتائج -->
+<div id="results-screen" class="screen">
+    <div class="container">
+        <h2>انتهت اللعبة!</h2>
+        <div class="results-container">
+            <div class="player-result">
+                <h3 id="result-player1-name">اللاعب 1</h3>
+                <div class="score-big" id="result-player1-score">0</div>
+            </div>
+            <div class="vs">VS</div>
+            <div class="player-result">
+                <h3 id="result-player2-name">اللاعب 2</h3>
+                <div class="score-big" id="result-player2-score">0</div>
+            </div>
+        </div>
+        <div id="winner-announcement"></div>
+        <button id="play-again-btn" class="btn primary">اللعب مرة أخرى</button>
+    </div>
+</div>
     <!-- شاشة اللعبة - نسخة مبسطة فقط لإظهار نجاح الانضمام -->
     <div id="game-screen" class="screen">
-        <div class="container">
-            <div class="game-header">
-                <div class="player-info">
-                    <h3 id="player1-name">اللاعب 1</h3>
-                    <div class="score" id="player1-score">0</div>
+    <!-- شاشة اللعبة -->
+<div id="game-screen" class="screen">
+    <div class="container">
+        <div class="game-header">
+            <div class="player-info">
+                <h3 id="player1-name">اللاعب 1</h3>
+                <div class="score" id="player1-score">0</div>
+            </div>
+            <div class="game-status">
+                <div class="round-info">
+                    <span>الجولة: </span>
+                    <span id="current-round">1</span>/4
                 </div>
-                <div class="game-status">
-                    <div class="round-info">
-                        <span>الجولة: </span>
-                        <span id="current-round">1</span>/4
-                    </div>
-                </div>
-                <div class="player-info">
-                    <h3 id="player2-name">اللاعب 2</h3>
-                    <div class="score" id="player2-score">0</div>
+                <div class="turn-info">
+                    <span>الدور: </span>
+                    <span id="current-turn">اللاعب 1</span>
                 </div>
             </div>
+            <div class="player-info">
+                <h3 id="player2-name">اللاعب 2</h3>
+                <div class="score" id="player2-score">0</div>
+            </div>
+        </div>
 
-            <div class="game-content">
-                <h2>تم الانضمام بنجاح!</h2>
-                <p>سيتم تطوير بقية اللعبة قريبًا.</p>
+        <div class="game-content">
+            <div id="knowledge-round" class="round-section">
+                <!-- محتوى جولة المعرفة موجود بالفعل -->
+            </div>
+            
+            <div id="auction-round" class="round-section hidden">
+                <!-- محتوى جولة المزاد موجود بالفعل -->
+            </div>
+            
+            <div id="bell-round" class="round-section hidden">
+                <!-- محتوى جولة الجرس موجود بالفعل -->
+            </div>
+            
+            <div id="career-round" class="round-section hidden">
+                <!-- محتوى جولة المسيرة موجود بالفعل -->
             </div>
         </div>
     </div>
-
+</div>
     <!-- النصوص البرمجية المضمنة مباشرة - لحل مشكلة الهاتف المحمول -->
     <script>
         // --- إعدادات Firebase ---
@@ -376,5 +477,179 @@
         // استدعاء لضمان سلامة التشغيل على الهاتف
         console.log('تم تحميل النصوص البرمجية بنجاح');
     </script>
+    <!-- إضافة منطق اللعبة -->
+<script src="js/game-logic.js"></script>
+
+<script>
+// استكمال وظائف اللعبة
+document.addEventListener('DOMContentLoaded', function() {
+    // إضافة معالجات أحداث للأزرار الخاصة باللعبة
+    
+    // زر تقديم إجابة المعرفة
+    const submitKnowledgeBtn = document.getElementById('submit-knowledge');
+    if (submitKnowledgeBtn) {
+        submitKnowledgeBtn.addEventListener('click', function() {
+            const answer = document.getElementById('knowledge-answer').value.trim();
+            if (!answer) {
+                showToast('يرجى إدخال إجابة', 'error');
+                return;
+            }
+            
+            if (checkKnowledgeAnswer(answer)) {
+                showToast('إجابة صحيحة! 🎉', 'success');
+                
+                // تحديث النتيجة
+                updatePlayerScore(gameState.playerId, 1);
+                
+                // الانتقال للسؤال التالي
+                moveToNextQuestion();
+            } else {
+                showToast('إجابة خاطئة', 'error');
+            }
+        });
+    }
+    
+    // زر تمرير المعرفة
+    const passKnowledgeBtn = document.getElementById('pass-knowledge');
+    if (passKnowledgeBtn) {
+        passKnowledgeBtn.addEventListener('click', function() {
+            // تغيير الدور للاعب الآخر
+            changePlayerTurn();
+        });
+    }
+    
+    // زر الجرس
+    const bellButton = document.getElementById('bell-button');
+    if (bellButton) {
+        bellButton.addEventListener('click', function() {
+            const bellAnswerSection = document.getElementById('bell-answer-section');
+            if (bellAnswerSection) {
+                bellAnswerSection.style.display = 'flex';
+            }
+            showToast('تم ضغط الجرس! أدخل إجابتك الآن', 'info');
+        });
+    }
+    
+    // زر تقديم إجابة الجرس
+    const submitBellBtn = document.getElementById('submit-bell-answer');
+    if (submitBellBtn) {
+        submitBellBtn.addEventListener('click', function() {
+            const answer = document.getElementById('bell-answer').value.trim();
+            if (!answer) {
+                showToast('يرجى إدخال إجابة', 'error');
+                return;
+            }
+            
+            if (checkBellAnswer(answer)) {
+                showToast('إجابة صحيحة! 🔔', 'success');
+                
+                // تحديث النتيجة
+                updatePlayerScore(gameState.playerId, 1);
+                
+                // الانتقال للسؤال التالي
+                moveToNextQuestion();
+            } else {
+                showToast('إجابة خاطئة', 'error');
+                // تغيير الدور للاعب الآخر
+                changePlayerTurn();
+            }
+        });
+    }
+    
+    // زر تقديم إجابة المسيرة
+    const submitCareerBtn = document.getElementById('submit-career');
+    if (submitCareerBtn) {
+        submitCareerBtn.addEventListener('click', function() {
+            const answer = document.getElementById('career-answer').value.trim();
+            if (!answer) {
+                showToast('يرجى إدخال إجابة', 'error');
+                return;
+            }
+            
+            if (checkCareerAnswer(answer)) {
+                showToast('إجابة صحيحة! 🌟', 'success');
+                
+                // تحديث النتيجة
+                updatePlayerScore(gameState.playerId, 1);
+                
+                // الانتقال للسؤال التالي
+                moveToNextQuestion();
+            } else {
+                showToast('إجابة خاطئة', 'error');
+            }
+        });
+    }
+    
+    // ===== وظائف اللعبة الإضافية =====
+    
+    // تحديث نتيجة اللاعب
+    function updatePlayerScore(playerId, points) {
+        if (!gameState.roomCode || !playerId) return;
+        
+        const playerRef = database.ref(`rooms/${gameState.roomCode}/players/${playerId}`);
+        
+        playerRef.once('value').then(snapshot => {
+            const currentScore = snapshot.val().score || 0;
+            return playerRef.update({
+                score: currentScore + points
+            });
+        });
+    }
+    
+    // تغيير دور اللاعب
+    function changePlayerTurn() {
+        if (!gameState.roomCode) return;
+        
+        const nextPlayer = gameState.playerId === 'player1' ? 'player2' : 'player1';
+        
+        database.ref(`rooms/${gameState.roomCode}/gameState`).update({
+            currentTurn: nextPlayer
+        });
+    }
+    
+    // الانتقال للسؤال التالي
+    function moveToNextQuestion() {
+        if (!gameState.roomCode) return;
+        
+        const gameStateRef = database.ref(`rooms/${gameState.roomCode}/gameState`);
+        
+        gameStateRef.once('value').then(snapshot => {
+            const currentData = snapshot.val();
+            let nextQuestion = (currentData.currentQuestion || 0) + 1;
+            let nextRound = currentData.currentRound || 1;
+            
+            // التحقق من انتهاء أسئلة الجولة
+            if (nextQuestion > 5) {
+                nextQuestion = 1;
+                nextRound += 1;
+                
+                // التحقق من انتهاء اللعبة
+                if (nextRound > 4) {
+                    // انتهاء اللعبة
+                    endGame();
+                    return;
+                }
+            }
+            
+            return gameStateRef.update({
+                currentQuestion: nextQuestion,
+                currentRound: nextRound
+            });
+        });
+    }
+    
+    // انتهاء اللعبة
+    function endGame() {
+        if (!gameState.roomCode) return;
+        
+        database.ref(`rooms/${gameState.roomCode}`).update({
+            status: 'completed'
+        });
+        
+        // عرض شاشة النتائج
+        showScreen('results-screen');
+    }
+});
+</script>
 </body>
 </html>
