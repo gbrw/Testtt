@@ -1,204 +1,127 @@
-// بيانات التحديات (مثال)
-const challenges = [
-    {
-        id: 1,
-        name: "بطولة الرياض للشباب",
-        city: "الرياض",
-        date: "2025-06-15",
-        type: "فريق",
-        status: "current" // حالي
-    },
-    {
-        id: 2,
-        name: "تحدي المهارات الفردية",
-        city: "جدة",
-        date: "2025-05-25",
-        type: "فردي",
-        status: "current" // حالي
-    },
-    {
-        id: 3,
-        name: "بطولة الخليج للناشئين",
-        city: "الدمام",
-        date: "2025-07-10",
-        type: "فريق",
-        status: "upcoming" // قادم
-    },
-    {
-        id: 4,
-        name: "كأس القاهرة المفتوح",
-        city: "القاهرة",
-        date: "2025-08-05",
-        type: "فريق",
-        status: "upcoming" // قادم
-    }
-];
+// تحسينات في ملف JavaScript
 
-// بيانات النتائج السابقة (مثال)
-const results = [
-    {
-        id: 1,
-        name: "بطولة النجوم",
-        city: "الرياض",
-        date: "2025-04-20",
-        type: "فريق",
-        winner: "النجوم الزرقاء",
-        score: "3-1"
-    },
-    {
-        id: 2,
-        name: "تحدي المهارات",
-        city: "جدة",
-        date: "2025-04-10",
-        type: "فردي",
-        winner: "أحمد محمد",
-        score: "85 نقطة"
-    },
-    {
-        id: 3,
-        name: "بطولة الأهلي الودية",
-        city: "القاهرة",
-        date: "2025-03-25",
-        type: "فريق",
-        winner: "الأهلي",
-        score: "2-0"
-    },
-    {
-        id: 4,
-        name: "مسابقة المراوغات",
-        city: "الإسكندرية",
-        date: "2025-03-05",
-        type: "فردي",
-        winner: "خالد علي",
-        score: "92 نقطة"
-    }
-];
-
-// المستخدمين المسجلين (مثال بسيط)
-const users = [
-    { username: "admin", password: "admin123" },
-    { username: "user", password: "user123" }
-];
-
-// المستخدم الحالي
-let currentUser = null;
-
-// الوظائف الرئيسية عند تحميل الصفحة
-document.addEventListener('DOMContentLoaded', function() {
-    // عرض التحديات
-    displayChallenges();
+// إضافة خيار التبديل بين المظهر الفاتح والمظهر الداكن
+function setupDarkMode() {
+    const darkModeToggle = document.createElement('button');
+    darkModeToggle.classList.add('dark-mode-toggle');
+    darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+    darkModeToggle.title = 'تبديل المظهر';
     
-    // عرض النتائج السابقة إذا كنا في صفحة النتائج
-    if (document.getElementById('pastResults')) {
-        displayResults(results);
+    document.querySelector('header .container').appendChild(darkModeToggle);
+    
+    // التحقق من الإعدادات المحفوظة
+    if (localStorage.getItem('darkMode') === 'enabled') {
+        document.body.classList.add('dark-mode');
+        darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
     }
     
-    // تفعيل نموذج تسجيل الدخول
-    setupLoginModal();
-    
-    // تفعيل البحث
-    setupSearch();
-    
-    // تفعيل التصفية في صفحة النتائج
-    if (document.getElementById('filterBtn')) {
-        document.getElementById('filterBtn').addEventListener('click', filterResults);
-    }
-});
-
-// عرض التحديات على الصفحة الرئيسية
-function displayChallenges() {
-    const currentContainer = document.getElementById('currentChallenges');
-    const upcomingContainer = document.getElementById('upcomingChallenges');
-    
-    if (!currentContainer || !upcomingContainer) return;
-    
-    // تفريغ الحاويات
-    currentContainer.innerHTML = '';
-    upcomingContainer.innerHTML = '';
-    
-    // تقسيم التحديات إلى حالية وقادمة
-    challenges.forEach(challenge => {
-        const challengeHTML = `
-            <div class="challenge-card">
-                <div class="card-header">
-                    <h3>${challenge.name}</h3>
-                </div>
-                <div class="card-body">
-                    <div class="card-info">
-                        <strong>المدينة:</strong> ${challenge.city}
-                    </div>
-                    <div class="card-info">
-                        <strong>التاريخ:</strong> ${formatDate(challenge.date)}
-                    </div>
-                    <div class="tag">${challenge.type}</div>
-                </div>
-            </div>
-        `;
-        
-        if (challenge.status === 'current') {
-            currentContainer.innerHTML += challengeHTML;
-        } else if (challenge.status === 'upcoming') {
-            upcomingContainer.innerHTML += challengeHTML;
+    darkModeToggle.addEventListener('click', function() {
+        if (document.body.classList.contains('dark-mode')) {
+            document.body.classList.remove('dark-mode');
+            localStorage.setItem('darkMode', 'disabled');
+            darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+        } else {
+            document.body.classList.add('dark-mode');
+            localStorage.setItem('darkMode', 'enabled');
+            darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
         }
     });
 }
 
-// عرض النتائج السابقة
-function displayResults(resultsArray) {
-    const resultsContainer = document.getElementById('pastResults');
-    if (!resultsContainer) return;
+// تحسين البحث ليكون فوريًا مع الكتابة
+function setupImprovedSearch() {
+    const searchInput = document.getElementById('searchInput');
     
-    // تفريغ الحاوية
-    resultsContainer.innerHTML = '';
+    if (!searchInput) return;
     
-    if (resultsArray.length === 0) {
-        resultsContainer.innerHTML = '<p>لم يتم العثور على نتائج مطابقة</p>';
+    searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.trim().toLowerCase();
+        performSearch(searchTerm);
+    });
+    
+    // إضافة زر مسح البحث
+    const clearButton = document.createElement('button');
+    clearButton.classList.add('clear-search');
+    clearButton.innerHTML = '×';
+    clearButton.style.display = 'none';
+    
+    searchInput.parentNode.style.position = 'relative';
+    searchInput.parentNode.appendChild(clearButton);
+    
+    clearButton.addEventListener('click', function() {
+        searchInput.value = '';
+        this.style.display = 'none';
+        performSearch('');
+    });
+    
+    searchInput.addEventListener('input', function() {
+        clearButton.style.display = this.value ? 'block' : 'none';
+    });
+}
+
+// إجراء البحث بشكل أكثر كفاءة
+function performSearch(searchTerm) {
+    if (!searchTerm) {
+        displayChallenges();
         return;
     }
     
-    // إضافة نتيجة لكل بطاقة
-    resultsArray.forEach(result => {
-        resultsContainer.innerHTML += `
-            <div class="result-card">
-                <div class="card-header">
-                    <h3>${result.name}</h3>
+    const filteredChallenges = challenges.filter(challenge => 
+        challenge.name.toLowerCase().includes(searchTerm) ||
+        challenge.city.toLowerCase().includes(searchTerm) ||
+        challenge.type.toLowerCase().includes(searchTerm)
+    );
+    
+    displayFilteredChallenges(filteredChallenges);
+}
+
+// عرض التحديات المصفاة
+function displayFilteredChallenges(filteredChallenges) {
+    const currentFiltered = filteredChallenges.filter(c => c.status === 'current');
+    const upcomingFiltered = filteredChallenges.filter(c => c.status === 'upcoming');
+    
+    updateChallengeContainer('currentChallenges', currentFiltered, 'لم يتم العثور على تحديات حالية مطابقة');
+    updateChallengeContainer('upcomingChallenges', upcomingFiltered, 'لم يتم العثور على تحديات قادمة مطابقة');
+}
+
+// تحديث حاوية التحديات (تجنب تكرار الكود)
+function updateChallengeContainer(containerId, challenges, emptyMessage) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    if (challenges.length === 0) {
+        const emptyDiv = document.createElement('div');
+        emptyDiv.className = 'empty-result';
+        emptyDiv.innerHTML = `<p>${emptyMessage}</p>`;
+        container.appendChild(emptyDiv);
+        return;
+    }
+    
+    challenges.forEach(challenge => {
+        const card = document.createElement('div');
+        card.className = 'challenge-card';
+        card.innerHTML = `
+            <div class="card-header">
+                <h3>${challenge.name}</h3>
+            </div>
+            <div class="card-body">
+                <div class="card-info">
+                    <strong>المدينة:</strong> ${challenge.city}
                 </div>
-                <div class="card-body">
-                    <div class="card-info">
-                        <strong>المدينة:</strong> ${result.city}
-                    </div>
-                    <div class="card-info">
-                        <strong>التاريخ:</strong> ${formatDate(result.date)}
-                    </div>
-                    <div class="card-info">
-                        <strong>الفائز:</strong> ${result.winner}
-                    </div>
-                    <div class="card-info">
-                        <strong>النتيجة:</strong> ${result.score}
-                    </div>
-                    <div class="tag">${result.type}</div>
+                <div class="card-info">
+                    <strong>التاريخ:</strong> ${formatDate(challenge.date)}
                 </div>
+                <div class="tag">${challenge.type}</div>
             </div>
         `;
+        container.appendChild(card);
     });
 }
 
-// تصفية النتائج
-function filterResults() {
-    const cityFilter = document.getElementById('cityFilter').value;
-    const typeFilter = document.getElementById('typeFilter').value;
-    
-    const filteredResults = results.filter(result => {
-        const cityMatch = cityFilter === '' || result.city === cityFilter;
-        const typeMatch = typeFilter === '' || result.type === typeFilter;
-        return cityMatch && typeMatch;
-    });
-    
-    displayResults(filteredResults);
-}
-
-// إعداد نموذج تسجيل الدخول
-function setupLoginModal() {
+// تحسين نموذج تسجيل الدخول مع رسائل خطأ أفضل
+function setupImprovedLoginModal() {
     const modal = document.getElementById('loginModal');
     const loginBtn = document.getElementById('loginBtn');
     const closeBtn = document.querySelector('.close');
@@ -206,24 +129,31 @@ function setupLoginModal() {
     
     if (!modal || !loginBtn || !closeBtn || !loginForm) return;
     
-    // فتح النموذج
+    // إضافة حقل رسالة الخطأ
+    const errorMessage = document.createElement('div');
+    errorMessage.className = 'error-message';
+    errorMessage.style.color = 'red';
+    errorMessage.style.marginBottom = '15px';
+    errorMessage.style.display = 'none';
+    
+    loginForm.insertBefore(errorMessage, loginForm.firstChild);
+    
     loginBtn.addEventListener('click', function() {
         modal.style.display = 'block';
+        errorMessage.style.display = 'none';
+        loginForm.reset();
     });
     
-    // إغلاق النموذج
     closeBtn.addEventListener('click', function() {
         modal.style.display = 'none';
     });
     
-    // إغلاق النموذج عند النقر خارجه
     window.addEventListener('click', function(event) {
         if (event.target === modal) {
             modal.style.display = 'none';
         }
     });
     
-    // معالجة تسجيل الدخول
     loginForm.addEventListener('submit', function(e) {
         e.preventDefault();
         const username = document.getElementById('username').value;
@@ -233,99 +163,63 @@ function setupLoginModal() {
         
         if (user) {
             currentUser = user;
-            alert('تم تسجيل الدخول بنجاح!');
             modal.style.display = 'none';
             loginBtn.textContent = 'مرحباً، ' + username;
+            
+            // إضافة إشعار نجاح
+            showNotification('تم تسجيل الدخول بنجاح!', 'success');
         } else {
-            alert('اسم المستخدم أو كلمة المرور غير صحيحة');
+            errorMessage.textContent = 'اسم المستخدم أو كلمة المرور غير صحيحة';
+            errorMessage.style.display = 'block';
         }
     });
 }
 
-// إعداد وظيفة البحث
-function setupSearch() {
-    const searchBtn = document.getElementById('searchBtn');
-    const searchInput = document.getElementById('searchInput');
+// إضافة إشعارات جميلة
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
     
-    if (!searchBtn || !searchInput) return;
+    document.body.appendChild(notification);
     
-    searchBtn.addEventListener('click', function() {
-        const searchTerm = searchInput.value.trim().toLowerCase();
-        
-        if (searchTerm === '') {
-            displayChallenges();
-            return;
-        }
-        
-        const filteredChallenges = challenges.filter(challenge => 
-            challenge.name.toLowerCase().includes(searchTerm) ||
-            challenge.city.toLowerCase().includes(searchTerm) ||
-            challenge.type.toLowerCase().includes(searchTerm)
-        );
-        
-        // عرض نتائج البحث
-        const currentFiltered = filteredChallenges.filter(c => c.status === 'current');
-        const upcomingFiltered = filteredChallenges.filter(c => c.status === 'upcoming');
-        
-        const currentContainer = document.getElementById('currentChallenges');
-        const upcomingContainer = document.getElementById('upcomingChallenges');
-        
-        if (currentContainer) {
-            currentContainer.innerHTML = '';
-            if (currentFiltered.length === 0) {
-                currentContainer.innerHTML = '<p>لم يتم العثور على تحديات حالية مطابقة</p>';
-            } else {
-                currentFiltered.forEach(challenge => {
-                    currentContainer.innerHTML += `
-                        <div class="challenge-card">
-                            <div class="card-header">
-                                <h3>${challenge.name}</h3>
-                            </div>
-                            <div class="card-body">
-                                <div class="card-info">
-                                    <strong>المدينة:</strong> ${challenge.city}
-                                </div>
-                                <div class="card-info">
-                                    <strong>التاريخ:</strong> ${formatDate(challenge.date)}
-                                </div>
-                                <div class="tag">${challenge.type}</div>
-                            </div>
-                        </div>
-                    `;
-                });
-            }
-        }
-        
-        if (upcomingContainer) {
-            upcomingContainer.innerHTML = '';
-            if (upcomingFiltered.length === 0) {
-                upcomingContainer.innerHTML = '<p>لم يتم العثور على تحديات قادمة مطابقة</p>';
-            } else {
-                upcomingFiltered.forEach(challenge => {
-                    upcomingContainer.innerHTML += `
-                        <div class="challenge-card">
-                            <div class="card-header">
-                                <h3>${challenge.name}</h3>
-                            </div>
-                            <div class="card-body">
-                                <div class="card-info">
-                                    <strong>المدينة:</strong> ${challenge.city}
-                                </div>
-                                <div class="card-info">
-                                    <strong>التاريخ:</strong> ${formatDate(challenge.date)}
-                                </div>
-                                <div class="tag">${challenge.type}</div>
-                            </div>
-                        </div>
-                    `;
-                });
-            }
-        }
-    });
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 10);
+    
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+            notification.remove();
+        }, 300);
+    }, 3000);
 }
 
-// تنسيق التاريخ
-function formatDate(dateString) {
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date(dateString).toLocaleDateString('ar-SA', options);
-}
+// تحسين تجربة التصفح
+document.addEventListener('DOMContentLoaded', function() {
+    displayChallenges();
+    
+    if (document.getElementById('pastResults')) {
+        displayResults(results);
+    }
+    
+    setupImprovedLoginModal();
+    setupImprovedSearch();
+    setupDarkMode();
+    
+    if (document.getElementById('filterBtn')) {
+        document.getElementById('filterBtn').addEventListener('click', filterResults);
+    }
+    
+    // إضافة تأثيرات لطيفة عند التمرير
+    window.addEventListener('scroll', function() {
+        const cards = document.querySelectorAll('.challenge-card, .result-card');
+        cards.forEach(card => {
+            const position = card.getBoundingClientRect();
+            
+            if (position.top >= 0 && position.bottom <= window.innerHeight) {
+                card.classList.add('in-view');
+            }
+        });
+    });
+});
