@@ -88,12 +88,22 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // حدث تأكيد الانضمام
   confirmJoinBtn.addEventListener('click', () => {
-    console.log('تم النقر على زر تأكيد الانضمام');
-    const playerName = playerNameInput.value.trim();
-    const roomCode = roomCodeInput.value.trim();
+  // تحديث معالج حدث زر الانضمام
+confirmJoinBtn.addEventListener('click', () => {
+  console.log('تم النقر على زر تأكيد الانضمام');
+  const playerName = playerNameInput.value.trim();
+  const roomCode = roomCodeInput.value.trim().toUpperCase(); // تحويل الرمز إلى أحرف كبيرة
+  
+  console.log(`محاولة الانضمام: الاسم=${playerName}, رمز الغرفة=${roomCode}`);
+  
+  if (playerName && roomCode) {
+    // عرض مؤشر التحميل
+    confirmJoinBtn.disabled = true;
+    confirmJoinBtn.textContent = "جاري الانضمام...";
+    showToast('جاري محاولة الانضمام إلى الغرفة...', 'info');
     
-    if (playerName && roomCode) {
-      joinRoom(roomCode, playerName).then(() => {
+    joinRoom(roomCode, playerName)
+      .then(() => {
         console.log('تم الانضمام إلى الغرفة بنجاح');
         // تهيئة اللعبة
         initGame(roomCode, 'player2', false);
@@ -102,14 +112,25 @@ document.addEventListener('DOMContentLoaded', () => {
         waitingRoomCode.textContent = roomCode;
         showScreen('game-screen');
         showToast('تم الانضمام إلى الغرفة بنجاح!', 'success');
-      }).catch(error => {
+      })
+      .catch(error => {
         console.error('خطأ في الانضمام إلى الغرفة:', error);
         showToast('حدث خطأ أثناء الانضمام إلى الغرفة: ' + error.message, 'error');
+      })
+      .finally(() => {
+        // إعادة تفعيل الزر
+        confirmJoinBtn.disabled = false;
+        confirmJoinBtn.textContent = "انضمام";
       });
-    } else {
-      showToast('يرجى إدخال اسم اللاعب ورمز الغرفة', 'error');
+  } else {
+    if (!playerName) {
+      showToast('يرجى إدخال اسم اللاعب', 'error');
     }
-  });
+    if (!roomCode) {
+      showToast('يرجى إدخال رمز الغرفة', 'error');
+    }
+  }
+});
   
   // ==== معالجات أحداث جولة "ماذا تعرف؟" ====
   
