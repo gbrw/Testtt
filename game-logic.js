@@ -474,14 +474,6 @@ function setupAnswersSection(requiredAnswers) {
     inputDiv.appendChild(input);
     answersContainer.appendChild(inputDiv);
   }
-  
-  // بدء المؤقت (30 ث
-// إضافة هذه الأسطر في نهاية ملف game-logic.js
-window.initGame = initGame;
-window.showScreen = showScreen;
-window.gameState = gameState;
-window.moveToNextQuestion = moveToNextQuestion;
-window.endGame = endGame;
 
 // الانتقال إلى السؤال التالي
 function moveToNextQuestion() {
@@ -532,3 +524,9 @@ function endGame() {
   // عرض شاشة النتائج
   showFinalResults();
 }
+// إضافة هذه الأسطر في نهاية ملف game-logic.js
+window.initGame = initGame;
+window.showScreen = showScreen;
+window.gameState = gameState;
+window.moveToNextQuestion = moveToNextQuestion;
+window.endGame = endGame;
