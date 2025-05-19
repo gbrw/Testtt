@@ -931,6 +931,8 @@ function showFinalResults() {
 }
 
 // إعداد أحداث DOM عند تحميل الصفحة
+// استبدل كل كود التفاعل في نهاية الملف بهذا
+
 document.addEventListener('DOMContentLoaded', () => {
   console.log('تم تحميل الصفحة');
   
@@ -949,12 +951,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const waitingRoomCode = document.getElementById('waiting-room-code');
   const playAgainBtn = document.getElementById('play-again-btn');
   
-  // مراجع عناصر DOM لجولة "ماذا تعرف؟"
+  // مراجع جولة "ماذا تعرف؟"
   const knowledgeAnswer = document.getElementById('knowledge-answer');
   const submitKnowledge = document.getElementById('submit-knowledge');
   const passKnowledge = document.getElementById('pass-knowledge');
   
-  // مراجع عناصر DOM لجولة "المزاد"
+  // مراجع جولة "المزاد"
   const decreaseBid = document.getElementById('decrease-bid');
   const increaseBid = document.getElementById('increase-bid');
   const currentBid = document.getElementById('current-bid');
@@ -962,30 +964,30 @@ document.addEventListener('DOMContentLoaded', () => {
   const passBid = document.getElementById('pass-bid');
   const submitAnswers = document.getElementById('submit-answers');
   
-  // مراجع عناصر DOM لجولة "الجرس"
+  // مراجع جولة "الجرس"
   const bellButton = document.getElementById('bell-button');
   const bellAnswer = document.getElementById('bell-answer');
   const submitBellAnswer = document.getElementById('submit-bell-answer');
   
-  // مراجع عناصر DOM لجولة "مسيرة لاعب"
+  // مراجع جولة "مسيرة لاعب"
   const careerAnswer = document.getElementById('career-answer');
   const submitCareer = document.getElementById('submit-career');
   
-  // متغيرات الحالة
   let currentBidValue = 1;
   
-  console.log('إضافة مستمعي الأحداث للأزرار');
-  
-  // حدث إنشاء غرفة
+  // ======= أحداث صفحة البداية =======
   createRoomBtn.addEventListener('click', () => {
     console.log('تم النقر على زر إنشاء غرفة');
     const playerName = playerNameInput.value.trim();
-    if (playerName) {
-      console.log('جاري إنشاء غرفة للاعب:', playerName);
-      // إنشاء غرفة جديدة
-      createRoom(playerName).then(roomCode => {
+    if (!playerName) {
+      alert('يرجى إدخال اسم اللاعب');
+      return;
+    }
+    
+    console.log('جاري إنشاء غرفة للاعب:', playerName);
+    createRoom(playerName)
+      .then(roomCode => {
         console.log('تم إنشاء الغرفة بنجاح، الرمز:', roomCode);
-        // عرض معلومات الغرفة
         roomCodeDisplay.textContent = roomCode;
         waitingRoomCode.textContent = roomCode;
         createdRoomInfo.classList.remove('hidden');
@@ -998,31 +1000,32 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
           showScreen('waiting-screen');
         }, 2000);
-      }).catch(error => {
+      })
+      .catch(error => {
         console.error('خطأ في إنشاء الغرفة:', error);
         alert('حدث خطأ أثناء إنشاء الغرفة: ' + error.message);
       });
-    } else {
-      alert('يرجى إدخال اسم اللاعب.');
-    }
   });
   
-  // أحداث الأزرار الأخرى تضاف هنا
-  // حدث إظهار نموذج الانضمام
   joinRoomBtn.addEventListener('click', () => {
     console.log('تم النقر على زر الانضمام إلى غرفة');
     createdRoomInfo.classList.add('hidden');
     joinRoomForm.classList.remove('hidden');
   });
   
-  // حدث تأكيد الانضمام
   confirmJoinBtn.addEventListener('click', () => {
     console.log('تم النقر على زر تأكيد الانضمام');
     const playerName = playerNameInput.value.trim();
     const roomCode = roomCodeInput.value.trim();
     
-    if (playerName && roomCode) {
-      joinRoom(roomCode, playerName).then(() => {
+    if (!playerName || !roomCode) {
+      alert('يرجى إدخال اسم اللاعب ورمز الغرفة');
+      return;
+    }
+    
+    console.log('جاري الانضمام للغرفة:', roomCode, 'كـ', playerName);
+    joinRoom(roomCode, playerName)
+      .then(() => {
         console.log('تم الانضمام إلى الغرفة بنجاح');
         // تهيئة اللعبة
         initGame(roomCode, 'player2', false);
@@ -1030,16 +1033,224 @@ document.addEventListener('DOMContentLoaded', () => {
         // إظهار شاشة اللعبة
         waitingRoomCode.textContent = roomCode;
         showScreen('game-screen');
-      }).catch(error => {
+      })
+      .catch(error => {
         console.error('خطأ في الانضمام إلى الغرفة:', error);
         alert('حدث خطأ أثناء الانضمام إلى الغرفة: ' + error.message);
       });
-    } else {
-      alert('يرجى إدخال اسم اللاعب ورمز الغرفة.');
+  });
+  
+  playAgainBtn.addEventListener('click', () => {
+    console.log('تم النقر على زر اللعب مرة أخرى');
+    // العودة إلى الشاشة الرئيسية
+    showScreen('welcome-screen');
+    
+    // إعادة تعيين النموذج
+    playerNameInput.value = '';
+    roomCodeInput.value = '';
+    createdRoomInfo.classList.add('hidden');
+    joinRoomForm.classList.add('hidden');
+  });
+  
+  // ======= أحداث جولة "ماذا تعرف؟" =======
+  submitKnowledge.addEventListener('click', () => {
+    console.log('تم النقر على زر إرسال الإجابة - جولة المعرفة');
+    const answer = knowledgeAnswer.value.trim();
+    if (!answer) {
+      alert('يرجى إدخال إجابة');
+      return;
+    }
+    
+    console.log('إرسال الإجابة:', answer);
+    submitAnswer(gameState.roomCode, gameState.playerId, answer)
+      .then(() => {
+        console.log('تم إرسال الإجابة بنجاح');
+        knowledgeAnswer.value = '';
+      })
+      .catch(error => {
+        console.error('خطأ في إرسال الإجابة:', error);
+        alert('حدث خطأ أثناء إرسال الإجابة');
+      });
+  });
+  
+  passKnowledge.addEventListener('click', () => {
+    console.log('تم النقر على زر تمرير - جولة المعرفة');
+    submitAnswer(gameState.roomCode, gameState.playerId, 'PASS')
+      .then(() => {
+        console.log('تم تمرير الدور بنجاح');
+      })
+      .catch(error => {
+        console.error('خطأ في التمرير:', error);
+        alert('حدث خطأ أثناء تمرير الدور');
+      });
+  });
+  
+  // ======= أحداث جولة "المزاد" =======
+  decreaseBid.addEventListener('click', () => {
+    console.log('تم النقر على زر تقليل المزايدة');
+    if (currentBidValue > 1) {
+      currentBidValue--;
+      currentBid.textContent = currentBidValue;
     }
   });
   
-  // إضافة باقي مستمعي الأحداث للأزرار...
+  increaseBid.addEventListener('click', () => {
+    console.log('تم النقر على زر زيادة المزايدة');
+    currentBidValue++;
+    currentBid.textContent = currentBidValue;
+  });
+  
+  submitBid.addEventListener('click', () => {
+    console.log('تم النقر على زر تأكيد المزايدة:', currentBidValue);
+    submitBid(gameState.roomCode, gameState.playerId, currentBidValue)
+      .then(() => {
+        console.log('تم إرسال المزايدة بنجاح');
+      })
+      .catch(error => {
+        console.error('خطأ في إرسال المزايدة:', error);
+        alert('حدث خطأ أثناء إرسال المزايدة');
+      });
+  });
+  
+  passBid.addEventListener('click', () => {
+    console.log('تم النقر على زر تمرير المزايدة');
+    submitBid(gameState.roomCode, gameState.playerId, 0)
+      .then(() => {
+        console.log('تم تمرير المزايدة بنجاح');
+      })
+      .catch(error => {
+        console.error('خطأ في تمرير المزايدة:', error);
+        alert('حدث خطأ أثناء تمرير المزايدة');
+      });
+  });
+  
+  submitAnswers.addEventListener('click', () => {
+    console.log('تم النقر على زر تقديم إجابات المزاد');
+    const requiredAnswers = parseInt(document.getElementById('required-answers').textContent);
+    const answers = [];
+    
+    for (let i = 0; i < requiredAnswers; i++) {
+      const answerInput = document.getElementById(`auction-answer-${i}`);
+      if (answerInput && answerInput.value.trim()) {
+        answers.push(answerInput.value.trim());
+      }
+    }
+    
+    console.log('الإجابات المقدمة:', answers);
+    
+    if (answers.length !== requiredAnswers) {
+      alert(`يجب تقديم ${requiredAnswers} إجابات`);
+      return;
+    }
+    
+    database.ref('rooms/' + gameState.roomCode + '/auctionAnswers').set({
+      playerKey: gameState.playerId,
+      answers: answers,
+      timestamp: firebase.database.ServerValue.TIMESTAMP
+    })
+    .then(() => {
+      console.log('تم إرسال إجابات المزاد بنجاح');
+    })
+    .catch(error => {
+      console.error('خطأ في إرسال إجابات المزاد:', error);
+      alert('حدث خطأ أثناء إرسال إجابات المزاد');
+    });
+  });
+  
+  // ======= أحداث جولة "الجرس" =======
+  bellButton.addEventListener('click', () => {
+    console.log('تم النقر على زر الجرس');
+    ringBell(gameState.roomCode, gameState.playerId)
+      .then(() => {
+        console.log('تم إرسال ضغطة الجرس بنجاح');
+        // إظهار حقل الإجابة
+        document.getElementById('bell-answer-section').style.display = 'flex';
+      })
+      .catch(error => {
+        console.error('خطأ في إرسال ضغطة الجرس:', error);
+        alert('حدث خطأ أثناء ضغط الجرس');
+      });
+  });
+  
+  submitBellAnswer.addEventListener('click', () => {
+    console.log('تم النقر على زر إرسال إجابة الجرس');
+    const answer = bellAnswer.value.trim();
+    if (!answer) {
+      alert('يرجى إدخال إجابة');
+      return;
+    }
+    
+    console.log('إرسال إجابة الجرس:', answer);
+    submitAnswer(gameState.roomCode, gameState.playerId, answer)
+      .then(() => {
+        console.log('تم إرسال إجابة الجرس بنجاح');
+        bellAnswer.value = '';
+      })
+      .catch(error => {
+        console.error('خطأ في إرسال إجابة الجرس:', error);
+        alert('حدث خطأ أثناء إرسال إجابة الجرس');
+      });
+  });
+  
+  // ======= أحداث جولة "مسيرة لاعب" =======
+  submitCareer.addEventListener('click', () => {
+    console.log('تم النقر على زر إرسال إجابة مسيرة لاعب');
+    const answer = careerAnswer.value.trim();
+    if (!answer) {
+      alert('يرجى إدخال إجابة');
+      return;
+    }
+    
+    console.log('إرسال إجابة مسيرة لاعب:', answer);
+    submitAnswer(gameState.roomCode, gameState.playerId, answer)
+      .then(() => {
+        console.log('تم إرسال إجابة مسيرة لاعب بنجاح');
+        careerAnswer.value = '';
+      })
+      .catch(error => {
+        console.error('خطأ في إرسال إجابة مسيرة لاعب:', error);
+        alert('حدث خطأ أثناء إرسال إجابة مسيرة لاعب');
+      });
+  });
+  
+  // إضافة استجابة للمدخلات عند الضغط على Enter
+  knowledgeAnswer.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter' && !submitKnowledge.disabled) {
+      submitKnowledge.click();
+    }
+  });
+  
+  bellAnswer.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      submitBellAnswer.click();
+    }
+  });
+  
+  careerAnswer.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      submitCareer.click();
+    }
+  });
+
+  // التأكد من تفعيل/تعطيل الأزرار بشكل صحيح
+  function updateButtonState() {
+    const isMyTurn = gameState.currentTurn === gameState.playerId;
+    console.log('تحديث حالة الأزرار، هل دوري:', isMyTurn);
+    
+    // تحديث حالة أزرار المعرفة
+    knowledgeAnswer.disabled = !isMyTurn;
+    submitKnowledge.disabled = !isMyTurn;
+    passKnowledge.disabled = !isMyTurn;
+    
+    // هنا يمكن إضافة تحديث لأزرار الجولات الأخرى...
+  }
+  
+  // نعدل دالة updateGameUI لتحديث حالة الأزرار أيضا
+  const originalUpdateGameUI = updateGameUI;
+  updateGameUI = function() {
+    originalUpdateGameUI();
+    updateButtonState();
+  };
   
   console.log('تم إعداد جميع مستمعي الأحداث بنجاح');
 });
