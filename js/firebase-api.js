@@ -30,38 +30,54 @@ function createRoom(playerName) {
 }
 
 // الانضمام إلى غرفة موجودة
+// تحديث وظيفة الانضمام إلى غرفة
 function joinRoom(roomCode, playerName) {
+  console.log(`جاري محاولة الانضمام إلى الغرفة ${roomCode} باسم ${playerName}`);
+  
+  if (!roomCode || !playerName) {
+    return Promise.reject(new Error('يجب توفير رمز الغرفة واسم اللاعب'));
+  }
+  
   const roomRef = database.ref('rooms/' + roomCode);
   
-  return roomRef.once('value').then(snapshot => {
-    if (!snapshot.exists()) {
-      throw new Error('الغرفة غير موجودة');
-    }
-    
-    const roomData = snapshot.val();
-    
-    if (roomData.status !== 'waiting') {
-      throw new Error('اللعبة قد بدأت بالفعل');
-    }
-    
-    if (roomData.players && roomData.players.player2) {
-      throw new Error('الغرفة ممتلئة');
-    }
-    
-    // إضافة اللاعب الثاني
-    return roomRef.child('players').update({
-      player2: {
-        name: playerName,
-        score: 0,
-        ready: true
+  return roomRef.once('value')
+    .then(snapshot => {
+      console.log('تم استلام بيانات الغرفة', snapshot.exists());
+      
+      if (!snapshot.exists()) {
+        throw new Error('الغرفة غير موجودة');
       }
-    }).then(() => {
+      
+      const roomData = snapshot.val();
+      console.log('بيانات الغرفة:', roomData);
+      
+      if (roomData.status !== 'waiting') {
+        throw new Error('اللعبة قد بدأت بالفعل');
+      }
+      
+      if (roomData.players && roomData.players.player2) {
+        throw new Error('الغرفة ممتلئة');
+      }
+      
+      // إضافة اللاعب الثاني
+      return roomRef.child('players').update({
+        player2: {
+          name: playerName,
+          score: 0,
+          ready: true
+        }
+      });
+    })
+    .then(() => {
+      console.log('تم إضافة اللاعب بنجاح، تحديث حالة الغرفة إلى "ready"');
       // تحديث حالة الغرفة إلى 'جاهزة للبدء'
       return roomRef.update({
         status: 'ready'
       });
+    })
+    .then(() => {
+      console.log('اكتمل الانضمام إلى الغرفة بنجاح');
     });
-  });
 }
 
 // الاستماع للتغييرات في الغرفة
