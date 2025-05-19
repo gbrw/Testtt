@@ -469,12 +469,16 @@ function updateGameUI() {
 // تحديث عرض المؤقت
 function updateTimer() {
   if (gameState.timeLeft > 0) {
+function updateTimer() {
+  const timerElement = document.getElementById('timer');
+  if (!timerElement) return;
+  
+  if (gameState.timeLeft > 0) {
     const minutes = Math.floor(gameState.timeLeft / 60);
     const seconds = gameState.timeLeft % 60;
-    document.getElementById('timer').textContent = 
-      `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   } else {
-    document.getElementById('timer').textContent = '00:00';
+    timerElement.textContent = '00:00';
   }
 }
 
