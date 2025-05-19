@@ -476,3 +476,59 @@ function setupAnswersSection(requiredAnswers) {
   }
   
   // بدء المؤقت (30 ث
+// إضافة هذه الأسطر في نهاية ملف game-logic.js
+window.initGame = initGame;
+window.showScreen = showScreen;
+window.gameState = gameState;
+window.moveToNextQuestion = moveToNextQuestion;
+window.endGame = endGame;
+
+// الانتقال إلى السؤال التالي
+function moveToNextQuestion() {
+  console.log('الانتقال إلى السؤال التالي');
+  let nextQuestion = gameState.currentQuestion + 1;
+  let nextRound = gameState.currentRound;
+  
+  // التحقق مما إذا وصلنا لنهاية أسئلة الجولة الحالية
+  if (nextQuestion > 5) {
+    nextQuestion = 1;
+    nextRound += 1;
+    
+    // التحقق من انتهاء اللعبة
+    if (nextRound > 4) {
+      // انتهاء اللعبة
+      endGame();
+      return;
+    }
+  }
+  
+  // تحديد اللاعب الذي سيبدأ في السؤال التالي (تناوب)
+  let nextTurn = 'player1';
+  
+  // إذا كان سؤال جديد في نفس الجولة، استمر مع نفس اللاعب
+  if (nextQuestion === 1) {
+    // تناوب البداية في كل جولة
+    nextTurn = (nextRound % 2 === 1) ? 'player1' : 'player2';
+  }
+  
+  // تحديث حالة اللعبة
+  updateGameState(gameState.roomCode, {
+    currentQuestion: nextQuestion,
+    currentRound: nextRound,
+    currentTurn: nextTurn,
+    timeLeft: 0,
+    roundStarted: true
+  });
+}
+
+// إنهاء اللعبة
+function endGame() {
+  console.log('إنهاء اللعبة');
+  // تحديث حالة الغرفة إلى 'مكتملة'
+  database.ref('rooms/' + gameState.roomCode).update({
+    status: 'completed'
+  });
+  
+  // عرض شاشة النتائج
+  showFinalResults();
+}
