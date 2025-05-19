@@ -23,12 +23,14 @@
                 <button id="join-room-btn" class="btn secondary">الانضمام إلى غرفة</button>
             </div>
             <div id="join-room-form" class="hidden">
-                <div class="form-group">
-                    <label for="room-code">رمز الغرفة:</label>
-                    <input type="text" id="room-code" placeholder="أدخل رمز الغرفة" required>
-                </div>
-                <button id="confirm-join-btn" class="btn primary">انضمام</button>
-            </div>
+    <div class="form-group">
+        <label for="room-code">رمز الغرفة:</label>
+        <input type="text" id="room-code" placeholder="أدخل رمز الغرفة" required>
+    </div>
+    <div id="join-status"></div>
+    <!-- تعديل زر الانضمام بإضافة معالج حدث مباشر onclick -->
+    <button id="confirm-join-btn" class="btn primary" onclick="joinRoomOnClick()">انضمام</button>
+</div>
             <div id="created-room-info" class="hidden">
                 <h3>تم إنشاء الغرفة بنجاح!</h3>
                 <p>رمز الغرفة الخاص بك: <span id="room-code-display"></span></p>
@@ -182,5 +184,99 @@
     <script src="js/main-ux.js"></script>
     <script src="js/ui-handlers.js"></script>
     <script src="js/main.js"></script>
+    <!-- إضافة وظائف الانضمام الطارئة -->
+<script>
+// وظيفة النقر على زر الانضمام المباشرة
+function joinRoomOnClick() {
+  console.log('تم النقر على زر الانضمام بالمعالج المباشر');
+  
+  // الحصول على قيم الإدخال
+  const playerName = document.getElementById('player-name').value.trim();
+  const roomCode = document.getElementById('room-code').value.trim().toUpperCase();
+  
+  // عرض رسالة تأكيد للمستخدم
+  alert(`محاولة الانضمام: الاسم=${playerName}, رمز الغرفة=${roomCode}`);
+  
+  if (!playerName || !roomCode) {
+    alert('يرجى إدخال اسم اللاعب ورمز الغرفة');
+    return;
+  }
+  
+  // تعطيل الزر لمنع النقرات المتعددة
+  document.getElementById('confirm-join-btn').disabled = true;
+  document.getElementById('confirm-join-btn').textContent = 'جارِ الانضمام...';
+  
+  try {
+    // استدعاء وظيفة انضمام الغرفة
+    joinRoomEmergency(roomCode, playerName);
+  } catch (error) {
+    console.error('خطأ أثناء الانضمام:', error);
+    alert('حدث خطأ: ' + (error.message || 'فشلت محاولة الانضمام'));
+    document.getElementById('confirm-join-btn').disabled = false;
+    document.getElementById('confirm-join-btn').textContent = 'انضمام';
+  }
+}
+
+// وظيفة طوارئ للانضمام إلى الغرفة
+function joinRoomEmergency(roomCode, playerName) {
+  console.log(`وظيفة انضمام الطوارئ: ${roomCode}, ${playerName}`);
+  
+  const roomRef = database.ref('rooms/' + roomCode);
+  
+  roomRef.once('value')
+    .then(snapshot => {
+      if (!snapshot.exists()) {
+        throw new Error('الغرفة غير موجودة');
+      }
+      
+      const roomData = snapshot.val();
+      
+      if (roomData.status !== 'waiting') {
+        throw new Error('اللعبة قد بدأت بالفعل');
+      }
+      
+      if (roomData.players && roomData.players.player2) {
+        throw new Error('الغرفة ممتلئة');
+      }
+      
+      // إضافة اللاعب الثاني
+      return roomRef.child('players').update({
+        player2: {
+          name: playerName,
+          score: 0,
+          ready: true
+        }
+      });
+    })
+    .then(() => {
+      // تحديث حالة الغرفة
+      return roomRef.update({
+        status: 'ready'
+      });
+    })
+    .then(() => {
+      // تهيئة اللعبة
+      window.gameState.roomCode = roomCode;
+      window.gameState.playerId = 'player2';
+      window.gameState.isCreator = false;
+      
+      // الاستماع لتغييرات الغرفة
+      window.gameState.gameRef = listenToRoomChanges(roomCode, {
+        onRoomUpdate: handleRoomUpdate,
+        onRoomDeleted: handleRoomDeleted
+      });
+      
+      // عرض شاشة اللعبة
+      showScreen('game-screen');
+      alert('تم الانضمام بنجاح!');
+    })
+    .catch(error => {
+      console.error('خطأ في عملية الانضمام:', error);
+      alert('حدث خطأ: ' + (error.message || 'فشلت محاولة الانضمام'));
+      document.getElementById('confirm-join-btn').disabled = false;
+      document.getElementById('confirm-join-btn').textContent = 'انضمام';
+    });
+}
+</script>
 </body>
 </html>
