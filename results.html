@@ -4,15 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>النتائج السابقة - تحديات كرة القدم</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <header>
         <div class="container">
-            <div class="logo">
-                <h1>تحديات كرة القدم</h1>
-            </div>
+            <h1>تحديات كرة القدم</h1>
             <nav>
                 <ul>
                     <li><a href="index.html">الرئيسية</a></li>
@@ -23,7 +21,7 @@
         </div>
     </header>
 
-    <div class="search-container">
+    <div class="filter-box">
         <div class="container">
             <h2>تصفية النتائج</h2>
             <div class="filter-form">
@@ -33,7 +31,6 @@
                     <option value="جدة">جدة</option>
                     <option value="الدمام">الدمام</option>
                     <option value="القاهرة">القاهرة</option>
-                    <option value="الإسكندرية">الإسكندرية</option>
                 </select>
                 <select id="typeFilter">
                     <option value="">جميع الأنواع</option>
@@ -47,18 +44,16 @@
 
     <main>
         <div class="container">
-            <h2>نتائج التحديات السابقة</h2>
-            <div class="results" id="pastResults">
-                <!-- سيتم إضافة النتائج السابقة هنا عبر جافاسكريبت -->
-            </div>
+            <h2>النتائج السابقة</h2>
+            <div id="pastResults" class="grid"></div>
         </div>
     </main>
 
-    <!-- نموذج تسجيل الدخول المنبثق -->
     <div id="loginModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2>تسجيل الدخول</h2>
+            <div id="loginError" class="error"></div>
             <form id="loginForm">
                 <div class="form-group">
                     <label for="username">اسم المستخدم:</label>
@@ -75,10 +70,10 @@
 
     <footer>
         <div class="container">
-            <p>جميع الحقوق محفوظة &copy; 2025 - تحديات كرة القدم</p>
+            <p>جميع الحقوق محفوظة © 2025 - تحديات كرة القدم</p>
         </div>
     </footer>
 
-    <script src="js/main.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
