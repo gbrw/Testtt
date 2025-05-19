@@ -32,70 +32,73 @@ function createRoom(playerName) {
 // الانضمام إلى غرفة موجودة
 // تحديث وظيفة الانضمام إلى غرفة
 function joinRoom(roomCode, playerName) {
-  console.log(`جاري محاولة الانضمام إلى الغرفة ${roomCode} باسم ${playerName}`);
+// استبدل وظيفة الانضمام إلى غرفة بهذه الوظيفة
+function joinRoom(roomCode, playerName) {
+  console.log(`🔄 جاري الانضمام إلى الغرفة ${roomCode} باسم ${playerName}`);
   
-  if (!roomCode || !playerName) {
-    return Promise.reject(new Error('يجب توفير رمز الغرفة واسم اللاعب'));
-  }
-  
-  const roomRef = database.ref('rooms/' + roomCode);
-  
-  return roomRef.once('value')
-    .then(snapshot => {
-      console.log('تم استلام بيانات الغرفة', snapshot.exists());
-      
-      if (!snapshot.exists()) {
-        throw new Error('الغرفة غير موجودة');
-      }
-      
-      const roomData = snapshot.val();
-      console.log('بيانات الغرفة:', roomData);
-      
-      if (roomData.status !== 'waiting') {
-        throw new Error('اللعبة قد بدأت بالفعل');
-      }
-      
-      if (roomData.players && roomData.players.player2) {
-        throw new Error('الغرفة ممتلئة');
-      }
-      
-      // إضافة اللاعب الثاني
-      return roomRef.child('players').update({
-        player2: {
-          name: playerName,
-          score: 0,
-          ready: true
-        }
-      });
-    })
-    .then(() => {
-      console.log('تم إضافة اللاعب بنجاح، تحديث حالة الغرفة إلى "ready"');
-      // تحديث حالة الغرفة إلى 'جاهزة للبدء'
-      return roomRef.update({
-        status: 'ready'
-      });
-    })
-    .then(() => {
-      console.log('اكتمل الانضمام إلى الغرفة بنجاح');
-    });
-}
-
-// الاستماع للتغييرات في الغرفة
-function listenToRoomChanges(roomCode, callbacks) {
-  const roomRef = database.ref('rooms/' + roomCode);
-  
-  // الاستماع للتغييرات
-  roomRef.on('value', snapshot => {
-    if (!snapshot.exists()) {
-      callbacks.onRoomDeleted?.();
+  return new Promise((resolve, reject) => {
+    if (!roomCode || !playerName) {
+      reject(new Error('يجب توفير رمز الغرفة واسم اللاعب'));
       return;
     }
     
-    const roomData = snapshot.val();
-    callbacks.onRoomUpdate?.(roomData);
+    const roomRef = database.ref('rooms/' + roomCode);
+    
+    roomRef.once('value')
+      .then(snapshot => {
+        if (!snapshot.exists()) {
+          throw new Error('الغرفة غير موجودة');
+        }
+        
+        const roomData = snapshot.val();
+        console.log('🔍 بيانات الغرفة:', roomData);
+        
+        if (roomData.status !== 'waiting') {
+          throw new Error('اللعبة قد بدأت بالفعل');
+        }
+        
+        if (roomData.players && roomData.players.player2) {
+          throw new Error('الغرفة ممتلئة');
+        }
+        
+        // إضافة اللاعب الثاني
+        return roomRef.child('players').update({
+          player2: {
+            name: playerName,
+            score: 0,
+            ready: true
+          }
+        });
+      })
+      .then(() => {
+        console.log('✅ تم إضافة اللاعب الثاني بنجاح');
+        
+        // تحديث حالة الغرفة
+        return roomRef.update({
+          status: 'ready'
+        });
+      })
+      .then(() => {
+        console.log('✅ تم تحديث حالة الغرفة بنجاح');
+        
+        // تهيئة اللعبة
+        window.gameState.roomCode = roomCode;
+        window.gameState.playerId = 'player2';
+        window.gameState.isCreator = false;
+        
+        // الاستماع لتغييرات الغرفة
+        window.gameState.gameRef = listenToRoomChanges(roomCode, {
+          onRoomUpdate: handleRoomUpdate,
+          onRoomDeleted: handleRoomDeleted
+        });
+        
+        resolve();
+      })
+      .catch(error => {
+        console.error('❌ خطأ في الانضمام إلى الغرفة:', error);
+        reject(error);
+      });
   });
-  
-  return roomRef;
 }
 
 // تحديث حالة اللعبة
