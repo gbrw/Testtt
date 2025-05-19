@@ -4,16 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تحديات كرة القدم</title>
-    <link rel="stylesheet" href="css/style.css">
-    <!-- استيراد خط عربي من جوجل -->
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <header>
         <div class="container">
-            <div class="logo">
-                <h1>تحديات كرة القدم</h1>
-            </div>
+            <h1>تحديات كرة القدم</h1>
             <nav>
                 <ul>
                     <li><a href="index.html" class="active">الرئيسية</a></li>
@@ -24,11 +21,11 @@
         </div>
     </header>
 
-    <div class="search-container">
+    <div class="search-box">
         <div class="container">
-            <h2>ابحث عن التحديات</h2>
+            <h2>البحث عن التحديات</h2>
             <div class="search-form">
-                <input type="text" id="searchInput" placeholder="ابحث عن اسم التحدي، المدينة أو النوع...">
+                <input type="text" id="searchInput" placeholder="اكتب هنا للبحث...">
                 <button id="searchBtn">بحث</button>
             </div>
         </div>
@@ -37,22 +34,18 @@
     <main>
         <div class="container">
             <h2>التحديات الحالية</h2>
-            <div class="challenges" id="currentChallenges">
-                <!-- سيتم إضافة التحديات الحالية هنا عبر جافاسكريبت -->
-            </div>
+            <div id="currentChallenges" class="grid"></div>
 
             <h2>التحديات القادمة</h2>
-            <div class="challenges" id="upcomingChallenges">
-                <!-- سيتم إضافة التحديات القادمة هنا عبر جافاسكريبت -->
-            </div>
+            <div id="upcomingChallenges" class="grid"></div>
         </div>
     </main>
 
-    <!-- نموذج تسجيل الدخول المنبثق -->
     <div id="loginModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2>تسجيل الدخول</h2>
+            <div id="loginError" class="error"></div>
             <form id="loginForm">
                 <div class="form-group">
                     <label for="username">اسم المستخدم:</label>
@@ -69,10 +62,10 @@
 
     <footer>
         <div class="container">
-            <p>جميع الحقوق محفوظة &copy; 2025 - تحديات كرة القدم</p>
+            <p>جميع الحقوق محفوظة © 2025 - تحديات كرة القدم</p>
         </div>
     </footer>
 
-    <script src="js/main.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
